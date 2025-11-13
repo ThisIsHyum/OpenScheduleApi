@@ -1,0 +1,128 @@
+components:
+  schemas:
+    college:
+      type: object
+      properties:
+        collegeId:
+          type: integer
+          format: uint
+        name:
+          type: string
+        calls:
+          type: array
+          items:
+            $ref: '#/components/schemas/call'
+        campuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/campus'
+      required:
+        - collegeId
+        - name
+    call:
+      type: object
+      properties:
+        callId:
+          type: integer
+          format: uint
+        weekday:
+          type: integer
+          minimum: 0
+          maximum: 6
+        begins:
+          type: string
+          pattern: '^\d{2}:\d{2}:\d{2}$'
+          example: '14:00:00'
+          format: time
+        ends:
+          type: string
+          pattern: '^\d{2}:\d{2}:\d{2}$'
+          example: '15:30:00'
+          format: time
+        order:
+          type: integer
+          format: uint
+    campus:
+      type: object
+      properties:
+        campusId:
+          type: integer
+          format: uint
+        name:
+          type: string
+        collegeId:
+          type: integer
+          format: uint
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/group'
+      required:
+        - campusId
+        - name
+    group:
+      type: object
+      properties:
+        groupId:
+          type: integer
+          format: uint
+        name:
+          type: string
+        campusId:
+          type: integer
+          format: uint
+      required:
+        - groupId
+        - name
+    schedule:
+      type: object
+      properties:
+        groupId:
+          type: integer
+          format: uint
+        date:
+          type: string
+          format: date
+        lessons:
+          type: array
+          items:
+            $ref: '#/components/schemas/lesson'
+    parser:
+      type: object
+      properties:
+        parserId:
+          type: integer
+        collegeId:
+          type: integer
+
+    lesson:
+      type: object
+      properties:
+        lessonId:
+          type: integer
+          format: uint
+        groupId:
+          type: integer
+          format: uint
+        order:
+          type: integer
+          format: uint
+          description: Order of the lesson in the schedule
+        title:
+          type: string
+        teacher:
+          type: string
+        cabinet:
+          type: string
+    
+    updateGroupsRequest:
+      type: object
+      properties:
+        campusId:
+          type: integer
+          format: uint
+        studentGroupNames:
+          type: array
+          items:
+            type: string
+

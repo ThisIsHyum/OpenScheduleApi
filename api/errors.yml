@@ -1,0 +1,224 @@
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      required:
+        - statusCode
+        - error
+      properties:
+        statusCode:
+          type: integer
+        error:
+          type: string
+  
+  responses:
+    InternalServerError:
+      description: internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode:  500
+            error: internal server error
+
+    CollegeNotFoundError:
+      description: not found error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 404
+            error: college not found
+    CampusNotFoundError:
+      description: not found error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 404
+            error: campus not found
+    GroupNotFoundError:
+      description: not found error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 404
+            error: group not found
+    ParserNotFoundError:
+      description: not found error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 404
+            error: parser not found
+    
+    InvalidCollegeIdError:
+      description: bad request error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            error: invalid collegeId
+    InvalidCampusIdError:
+      description: bad request error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            error: invalid campusId
+    InvalidGroupIdError:
+      description: bad request error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            error: invalid groupId
+    InvalidParserIdError:
+      description: bad request error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            error: invalid parserId
+
+    ScheduleBadRequestError:
+      description: bad request error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            InvalidGroupId:
+              value:
+                statusCode: 400
+                error: invalid groupId
+            InvalidDate:
+              value:
+                statusCode: 400
+                error: invalid date format (expected dd-mm-yyyy)
+            InvalidWeek:
+              value:
+                statusCode: 400
+                error: invalid week (expected previous, current, next)
+            InvalidWeekday:
+              value:
+                statusCode: 400
+                error: invalid weekday
+            InvalidDay:
+              value:
+                statusCode: 400
+                error: invalid day (expected today or tomorrow)
+    ScheduleConflictError:
+      description: conflict error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            dateConflict:
+              value:
+                statusCode: 409
+                error: parameter 'date' cannot be combined with 'week', 'weekday' or 'day'
+            dayConflict:
+              value:
+                statusCode: 409
+                error: parameter 'day' cannot be combined with 'week', 'weekday' or 'date'
+    InvalidRequestBodyError:
+      description: bad request error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            error: invalid request body
+    CollegeExistsError:
+      description: conflict error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 409
+            error: college already exists
+    UnauthorizedError:
+      description: unauthorized error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            MissingAuthHeader:
+              value:
+                statusCode: 401
+                error: missing authentication header
+            InvalidAuthHeaderFormat:
+              value:
+                statusCode: 401
+                error: invalid authentication header format
+            InvalidToken:
+              value:
+                statusCode: 401
+                error: invalid authorization token
+
+    InvalidRequestBodyOrRequestDataError:
+      description: bad request error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            InvalidRequestBody:
+              value:
+                statusCode: 400
+                error: invalid request body
+            InvalidRequestData:
+              value:
+                statusCode: 400
+                error: invalid request data
+    
+    InvalidRequestBodyOrEmptyCallsListError:
+      description: bad request error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            InvalidRequestBody:
+              value:
+                statusCode: 400
+                error: invalid request body
+            EmptyCallsList:
+              value:
+                statusCode: 400
+                error: empty calls list
+    InvalidRequestBodyOrEmptyLessonsListError:
+      description: bad request error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            InvalidRequestBody:
+              value:
+                statusCode: 400
+                error: invalid request body
+            EmptyLessonsList:
+              value:
+                statusCode: 400
+                error: empty lessons list

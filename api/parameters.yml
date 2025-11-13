@@ -1,0 +1,76 @@
+components:
+  parameters:
+    name:
+      name: name
+      in: query
+      required: false
+      schema:
+        type: string
+    collegeId:
+        name: collegeId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: uint
+    campusId:
+      name: campusId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: uint
+    groupId:
+      name: groupId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: uint
+    parserId:
+      name: parserId
+      in: path
+      required: true
+      schema:
+        type: integer
+    
+    date:
+      name: date
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date
+    week:
+      name: week
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - previous
+          - current
+          - next
+    weekday:
+      name: weekday
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - monday
+          - tuesday
+          - wednesday
+          - thursday
+          - friday
+          - saturday
+          - sunday
+    day:
+      name: day
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - today
+          - tomorrow

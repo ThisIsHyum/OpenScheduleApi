@@ -1,0 +1,323 @@
+openapi: "3.1.0"
+info:
+  title: Open Schedule API
+  description: Open API for managing college schedules
+  version: "0.1"
+  license:
+    name: GPL-3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.html
+servers:
+  - url: https://api.thisishyum.ru/schedule_api/tyumen
+    description: Production server
+
+paths:
+  /colleges:
+    get:
+      tags:
+        - Colleges
+      summary: Get all colleges or college with specified name
+      parameters:
+        - $ref: 'parameters.yml#/components/parameters/name'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'models.yml#/components/schemas/college'
+        "500": 
+          $ref: 'errors.yml#/components/responses/InternalServerError'
+  /colleges/{collegeId}:
+    get:
+      tags:
+        - Colleges
+      summary: Get college by ID
+      parameters:
+        - $ref: 'parameters.yml#/components/parameters/collegeId'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'models.yml#/components/schemas/college'
+        "400":
+          $ref: 'errors.yml#/components/responses/InvalidCollegeIdError'
+        "404":
+          $ref: 'errors.yml#/components/responses/CollegeNotFoundError'
+        "500": 
+          $ref: 'errors.yml#/components/responses/InternalServerError'
+
+  /colleges/{collegeId}/campuses:
+    get:
+      tags:
+        - Campuses
+      summary: Get campuses of a college
+      parameters:
+        - $ref: 'parameters.yml#/components/parameters/collegeId'
+        - $ref: 'parameters.yml#/components/parameters/name'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'models.yml#/components/schemas/campus'
+        "400":
+          $ref: 'errors.yml#/components/responses/InvalidCollegeIdError'
+        "404":
+          $ref: 'errors.yml#/components/responses/CollegeNotFoundError'
+        "500": 
+          $ref: 'errors.yml#/components/responses/InternalServerError'
+  /campuses/{campusId}:
+    get:
+      tags:
+        - Campuses
+      summary: Get campus by ID
+      parameters:
+        - $ref: 'parameters.yml#/components/parameters/campusId'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'models.yml#/components/schemas/campus'
+        "400":
+          $ref: 'errors.yml#/components/responses/InvalidCampusIdError'
+        "404":
+          $ref: 'errors.yml#/components/responses/CampusNotFoundError'
+        "500": 
+          $ref: 'errors.yml#/components/responses/InternalServerError' 
+
+  /campuses/{campusId}/groups:
+    get:
+      tags:
+        - Groups
+      summary: Get groups of a campus
+      parameters:
+        - $ref: 'parameters.yml#/components/parameters/campusId'
+        - $ref: 'parameters.yml#/components/parameters/name'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'models.yml#/components/schemas/group'
+        "400":
+          $ref: 'errors.yml#/components/responses/InvalidCampusIdError'
+        "404":
+          $ref: 'errors.yml#/components/responses/CampusNotFoundError'
+        "500": 
+          $ref: 'errors.yml#/components/responses/InternalServerError'
+  /groups/{groupId}:
+    get:
+      tags:
+        - Groups
+      summary: Get group by ID
+      parameters:
+        - $ref: 'parameters.yml#/components/parameters/groupId'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'models.yml#/components/schemas/group'
+        "400":
+          $ref: 'errors.yml#/components/responses/InvalidGroupIdError'
+        "404":
+          $ref: 'errors.yml#/components/responses/GroupNotFoundError'
+        "500": 
+          $ref: 'errors.yml#/components/responses/InternalServerError'
+
+  /groups/{groupId}/schedules:
+    get:
+      tags:
+        - Schedules
+      summary: Find schedule by filters
+      parameters:
+        - $ref: 'parameters.yml#/components/parameters/groupId'
+        - $ref: 'parameters.yml#/components/parameters/date'
+        - $ref: 'parameters.yml#/components/parameters/day'
+        - $ref: 'parameters.yml#/components/parameters/week'
+        - $ref: 'parameters.yml#/components/parameters/weekday'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'models.yml#/components/schemas/schedule'
+        "400":
+          $ref: 'errors.yml#/components/responses/ScheduleBadRequestError'
+        "409":
+          $ref: 'errors.yml#/components/responses/ScheduleConflictError'
+        "500": 
+          $ref: 'errors.yml#/components/responses/InternalServerError'
+  /admin/parser:
+    post:
+      tags:
+        - Admin
+      summary: Create new parser
+      security:
+        - bearerAuth: [admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                collegeName:
+                  type: string
+                  description: Name of the college to create a parser for
+                campusNames:
+                  type: array
+                  items:
+                    type: string
+                  description: List of campus names to create parsers for
+              required:
+                - collegeName
+                - campusNames
+              example:
+                collegeName: "TKPST"
+                campusNames: ["Lunacharskogo", "Samartseva", "Ryleeva"]
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: created parser token
+        "400":
+          $ref: 'errors.yml#/components/responses/InvalidRequestBodyError'
+        "403":
+          $ref: 'errors.yml#/components/responses/UnauthorizedError'
+        "409":
+          $ref: 'errors.yml#/components/responses/CollegeExistsError'
+        "500":
+          $ref: 'errors.yml#/components/responses/InternalServerError'
+  /admin/parser/{parserId}:
+    delete:
+      tags:
+        - Admin
+      summary: delete parser
+      security:
+        - bearerAuth: [admin]
+      responses:
+        "204":
+          description: Deleted
+        "400":
+          $ref: 'errors.yml#/components/responses/InvalidParserIdError'
+        "401":
+          $ref: 'errors.yml#/components/responses/UnauthorizedError'
+        "404":
+          $ref: 'errors.yml#/components/responses/ParserNotFoundError'
+        "500":
+          $ref: 'errors.yml#/components/responses/InternalServerError'
+      parameters:
+        - $ref: 'parameters.yml#/components/parameters/parserId'
+  /parser/groups:
+    put:
+      tags:
+        - Parser
+      summary: update groups
+      security:
+        - bearerAuth: [parser]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'models.yml#/components/schemas/updateGroupsRequest'
+      responses:
+        "204":
+          description: parsers updated
+        "400":
+          $ref: 'errors.yml#/components/responses/InvalidRequestBodyOrRequestDataError'
+        "401":
+          $ref: 'errors.yml#/components/responses/UnauthorizedError'
+        "500":
+          $ref: 'errors.yml#/components/responses/InternalServerError'
+  /parser/calls:
+    post:
+      tags:
+        - Parser
+      summary: update call schedule
+      security:
+        - bearerAuth: [parser]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  weekday:
+                    type: integer
+                    minimum: 0
+                    maximum: 6
+                  begins:
+                    type: string
+                    pattern: '^\d{2}:\d{2}:\d{2}$'
+                    example: '14:00:00'
+                    format: time
+                  ends:
+                    type: string
+                    pattern: '^\d{2}:\d{2}:\d{2}$'
+                    example: '15:30:00'
+                    format: time
+                  order:
+                    type: integer
+                    format: uint
+      responses:
+        "204":
+          description: calls updated
+        "400":
+          $ref: 'errors.yml#/components/responses/InvalidRequestBodyOrEmptyCallsListError'
+        "401":
+          $ref: 'errors.yml#/components/responses/UnauthorizedError'
+        "500":
+          $ref: 'errors.yml#/components/responses/InternalServerError'
+  /parser/lessons:
+    post:
+      tags:
+        - Parser
+      summary: add lessons
+      security:
+        - bearerAuth: [parser]
+      responses:
+        "204":
+          description: lessons created
+        "400":
+          $ref: 'errors.yml#/components/responses/InvalidRequestBodyOrEmptyLessonsListError'
+        "401":
+          $ref: 'errors.yml#/components/responses/UnauthorizedError'
+        "500":
+          $ref: 'errors.yml#/components/responses/InternalServerError'
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+security:
+  - bearerAuth: [admin, parser]

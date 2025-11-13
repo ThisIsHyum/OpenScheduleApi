@@ -1,0 +1,8 @@
+.42c
+.vscode
+.git
+.gitignore
+docker-compose.yml
+README.md
+.env
+api

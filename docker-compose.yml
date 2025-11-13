@@ -1,0 +1,32 @@
+services:
+  api:
+    build:
+      context: .
+    image: openscheduleapi:latest
+    container_name: open_schedule_api
+    restart: unless-stopped
+    ports:
+      - ${OSA_SERVER_PORT}:${OSA_SERVER_PORT}
+    depends_on:
+      - db
+    env_file:
+      - .env
+    environment:
+      - TZ=UTC
+      - OSA_DB_HOST=db
+      - OSA_DB_PORT=3306
+      - OSA_DB_NAME=osadb
+
+  db:
+    image: mysql:8.0
+    container_name: osa_db
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - MYSQL_DATABASE=osadb
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
