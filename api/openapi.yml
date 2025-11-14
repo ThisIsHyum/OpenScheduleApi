@@ -232,7 +232,7 @@ paths:
       parameters:
         - $ref: 'parameters.yml#/components/parameters/parserId'
   /parser/groups:
-    put:
+    post:
       tags:
         - Parser
       summary: update groups
