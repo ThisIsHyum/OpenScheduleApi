@@ -27,7 +27,7 @@ func main() {
 	router.Register(app, db, logger, cfg.AdminToken)
 
 	addr := fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
-	logger.Infof("Running server on %s \n", addr)
+	logger.Infof("Running server on %s", addr)
 	if err := app.Listen(addr, fiber.ListenConfig{
 		DisableStartupMessage: true,
 	}); err != nil {
