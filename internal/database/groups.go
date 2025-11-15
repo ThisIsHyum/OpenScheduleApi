@@ -28,7 +28,7 @@ func (db *Db) GetGroupsByName(campusID uint, name string) ([]models.StudentGroup
 	var groups []models.StudentGroup
 	return groups, db.db.Where(&models.StudentGroup{
 		CampusID: campusID, Name: name}).
-		First(&groups).Error
+		Find(&groups).Error
 }
 
 func (db *Db) GetGroupsByCollegeID(collegeID uint) ([]models.StudentGroup, error) {
