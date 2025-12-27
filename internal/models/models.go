@@ -90,7 +90,11 @@ func NewSchedule(lessons []Lesson, calls []Call) Schedule {
 		Lessons: []ScheduleLesson{},
 	}
 	for _, lesson := range lessons {
-		schedule.addLesson(lesson, calls)
+		value, err := lesson.Date.Value()
+		if err != nil {
+			continue
+		}
+		schedule.addLesson(lesson, calls, value.(time.Time).Weekday())
 	}
 	return schedule
 }
@@ -100,26 +104,34 @@ func NewSchedules(lessons []Lesson, calls []Call) []Schedule {
 	for _, lesson := range lessons {
 		_, i, exists := findByDate(schedules, lesson.Date)
 		if exists {
-			schedules[i].addLesson(lesson, calls)
+			value, err := lesson.Date.Value()
+			if err != nil {
+				continue
+			}
+			schedules[i].addLesson(lesson, calls, value.(time.Time).Weekday())
 		} else {
 			schedule := Schedule{
 				GroupID: lesson.StudentGroupID,
 				Date:    lesson.Date,
 				Lessons: []ScheduleLesson{},
 			}
-			schedule.addLesson(lesson, calls)
+			value, err := lesson.Date.Value()
+			if err != nil {
+				continue
+			}
+			schedules[i].addLesson(lesson, calls, value.(time.Time).Weekday())
 			schedules = append(schedules, schedule)
 		}
 	}
 	return schedules
 }
 
-func (s *Schedule) addLesson(lesson Lesson, calls []Call) {
-	s.Lessons = append(s.Lessons, lesson.toScheduleLesson(calls))
+func (s *Schedule) addLesson(lesson Lesson, calls []Call, weekday time.Weekday) {
+	s.Lessons = append(s.Lessons, lesson.toScheduleLesson(calls, weekday))
 }
 
-func (l Lesson) toScheduleLesson(calls []Call) ScheduleLesson {
-	call := CallByOrder(calls, l.Order)
+func (l Lesson) toScheduleLesson(calls []Call, weekday time.Weekday) ScheduleLesson {
+	call := CallByOrderAndWeekday(calls, l.Order, weekday)
 	return ScheduleLesson{
 		Title:     l.Title,
 		Cabinet:   l.Cabinet,
@@ -130,9 +142,9 @@ func (l Lesson) toScheduleLesson(calls []Call) ScheduleLesson {
 	}
 }
 
-func CallByOrder(calls []Call, order uint) Call {
+func CallByOrderAndWeekday(calls []Call, order uint, weekday time.Weekday) Call {
 	for _, call := range calls {
-		if call.Order == order {
+		if call.Order == order && call.Weekday == weekday {
 			return call
 		}
 	}
