@@ -1,0 +1,98 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v0.1.0)'
+        required: true
+      prerelease:
+        description: 'Mark as pre-release'
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create Git tag
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git tag ${{ github.event.inputs.version }}
+          git push origin ${{ github.event.inputs.version }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.event.inputs.version }}
+          prerelease: ${{ github.event.inputs.prerelease }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+  upload_docker:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+  
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: |
+            ghcr.io/thisishyum/openscheduleapi:${{ github.event.inputs.version }}
+            ghcr.io/thisishyum/openscheduleapi:${{ github.event.inputs.prerelease == 'false' && 'latest' || 'edge' }}
+  build:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version: 1.25.1
+
+      - name: Build x86-64 linux binary
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+          go build -o OpenScheduleApi-linux-x86-64 .
+      - name: Build aarch64 linux binary
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=arm64 \
+          go build -o OpenScheduleApi-linux-aarch64 .
+
+      - name: Build x86-64 darwin binary
+        run: |
+          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 \
+          go build -o OpenScheduleApi-darwin-x86-64 .
+      - name: Build aarch64 darwin binary
+        run: |
+          CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 \
+          go build -o OpenScheduleApi-darwin-aarch64 .
+          
+      - name: Build x86-64 windows binary
+        run: |
+          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 \
+          go build -o OpenScheduleApi-windows-x86-64.exe .
+
+      - name: Upload binary to release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.event.inputs.version }}
+          files: |
+            OpenScheduleApi-linux-x86-64
+            OpenScheduleApi-linux-aarch64
+            OpenScheduleApi-darwin-x86-64
+            OpenScheduleApi-darwin-aarch64
+            OpenScheduleApi-windows-x86-64.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
