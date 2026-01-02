@@ -76,13 +76,13 @@ _Обязательно_
 
 ## Документация API
 - Все эндпоинты:  
-  https://github.com/ThisIsHyum/OpenScheduleApi/api/blob/main/openapi.yml
+  https://github.com/ThisIsHyum/OpenScheduleApi/blob/main/api/openapi.yml
 - Модели:  
-  https://github.com/ThisIsHyum/OpenScheduleApi/api/blob/main/models.yml
+  https://github.com/ThisIsHyum/OpenScheduleApi/blob/main/api/models.yml
 - Параметры:  
-  https://github.com/ThisIsHyum/OpenScheduleApi/api/blob/main/parameters.yml
+  https://github.com/ThisIsHyum/OpenScheduleApi/blob/main/api/parameters.yml
 - Ошибки:  
-  https://github.com/ThisIsHyum/OpenScheduleApi/api/blob/main/errors.yml
+  https://github.com/ThisIsHyum/OpenScheduleApi/blob/main/api/errors.yml
 ## Примеры запросов
 1. Создание колледжа  
 ```sh
