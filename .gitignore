@@ -3,3 +3,4 @@ osa.yaml
 .env
 .vscode
 .DS_Store
+compose.dev.yaml
