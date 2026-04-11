@@ -34,12 +34,7 @@ func (s AdminService) NewParser(ctx context.Context,
 		return "", err
 	}
 
-	committed := false
-	defer func() {
-		if !committed {
-			tx.Rollback()
-		}
-	}()
+	defer tx.Rollback()
 
 	collegeRepo := s.collegeRepo.WithTx(tx)
 	campusRepo := s.campusRepo.WithTx(tx)
@@ -67,7 +62,6 @@ func (s AdminService) NewParser(ctx context.Context,
 	if err := tx.Commit(); err != nil {
 		return "", err
 	}
-	committed = true
 	return token, nil
 }
 
