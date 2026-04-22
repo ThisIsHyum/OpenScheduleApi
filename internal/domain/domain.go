@@ -6,12 +6,6 @@ import (
 	"github.com/ThisIsHyum/OpenScheduleApi/internal/dto"
 )
 
-type Parser struct {
-	ID        uint
-	Token     string
-	CollegeID uint
-}
-
 type College struct {
 	ID    uint
 	Name  string
@@ -31,22 +25,19 @@ type StudentGroup struct {
 }
 
 type Call struct {
-	ID        uint
-	Weekday   time.Weekday
-	Begins    time.Time
-	Ends      time.Time
-	Order     uint
-	CollegeID uint
+	ID           uint
+	Weekday      time.Weekday
+	Begins, Ends time.Time
+	Order        uint
+	CollegeID    uint
 }
 
 type Lesson struct {
-	ID             uint
-	Title          string
-	Cabinet        string
-	Date           time.Time
-	Teacher        string
-	Order          uint
-	StudentGroupID uint
+	ID                      uint
+	Title, Cabinet, Teacher string
+	Date                    time.Time
+	Order                   uint
+	StudentGroupID          uint
 }
 
 func (c College) ToDTO(campuses []Campus) dto.CollegeResponse {
