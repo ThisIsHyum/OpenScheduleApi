@@ -28,7 +28,6 @@ func (l LessonDb) Add(ctx context.Context, lessons []domain.Lesson) error {
 	modelsLessons := []models.Lesson{}
 	for _, lesson := range lessons {
 		modelsLessons = append(modelsLessons, models.Lesson{
-			LessonID:       lesson.ID,
 			Title:          lesson.Title,
 			Cabinet:        lesson.Cabinet,
 			Date:           datatypes.Date(lesson.Date),
