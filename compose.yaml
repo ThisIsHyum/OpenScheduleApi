@@ -8,7 +8,8 @@ services:
     ports:
       - ${OSA_SERVER_PORT}:${OSA_SERVER_PORT}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     env_file:
       - .env
     environment:
@@ -25,8 +26,27 @@ services:
       - .env
     environment:
       - MYSQL_DATABASE=osadb
+      - MYSQL_USER=${OSA_DB_USER}
+      - MYSQL_PASSWORD=${OSA_DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p${MYSQL_ROOT_PASSWORD}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
 volumes:
   db_data:
