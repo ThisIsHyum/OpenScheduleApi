@@ -48,21 +48,6 @@ type (
 		Order     uint           `gorm:"uniqueIndex:idx_weekday_college_order" json:"order"`
 		CollegeID uint           `gorm:"uniqueIndex:idx_weekday_college_order" json:""`
 	}
-
-	Schedule struct {
-		GroupID uint             `json:"groupId"`
-		Date    datatypes.Date   `json:"date"`
-		Lessons []ScheduleLesson `json:"lessons"`
-	}
-
-	ScheduleLesson struct {
-		Title     string         `json:"title"`
-		Cabinet   string         `json:"cabinet"`
-		Teacher   string         `json:"teacher"`
-		Order     uint           `json:"order"`
-		StartTime datatypes.Time `json:"startTime"`
-		EndTime   datatypes.Time `json:"endTime"`
-	}
 )
 
 func (Campus) TableName() string { return "campuses" }
