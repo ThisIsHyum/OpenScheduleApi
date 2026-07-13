@@ -23,18 +23,10 @@ func main() {
 		logger.WithError(err).Fatal("unable to connect database")
 	}
 
-	collegeRepo := database.NewCollegeDb(db)
-	campusRepo := database.NewCampusDb(db)
-	studentGroupRepo := database.NewGroupDb(db)
-	callRepo := database.NewCallDb(db)
-	lessonRepo := database.NewLessonDb(db)
-
-	createTx := database.InitCreateTx(db)
+	repos := database.NewRepos(db)
 
 	app := fiber.New()
-	server.Register(app,
-		collegeRepo, campusRepo,
-		studentGroupRepo, callRepo, lessonRepo, createTx, logger, cfg.AdminToken)
+	server.Register(app, repos, logger, cfg.AdminToken)
 
 	addr := fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
 	logger.Infof("Running server on %s", addr)

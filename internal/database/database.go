@@ -43,3 +43,14 @@ func InitCreateTx(db *gorm.DB) repository.CreateTx {
 func (t Tx) Commit() error   { return t.db.Commit().Error }
 func (t Tx) Rollback() error { return t.db.Rollback().Error }
 func (t Tx) DB() any         { return t.db }
+
+func NewRepos(db *gorm.DB) repository.Repos {
+	return repository.Repos{
+		CollegeRepo:      NewCollegeDb(db),
+		CallRepo:         NewCallDb(db),
+		StudentGroupRepo: NewGroupDb(db),
+		LessonRepo:       NewLessonDb(db),
+		CampusRepo:       NewCampusDb(db),
+		CreateTx:         InitCreateTx(db),
+	}
+}

@@ -8,19 +8,14 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func Register(app *fiber.App,
-	collegeRepo repository.CollegeRepo, campusRepo repository.CampusRepo,
-	studentGroupRepo repository.StudentGroupRepo, callRepo repository.CallRepo,
-	lessonRepo repository.LessonRepo,
-	createTx repository.CreateTx,
-	logger *logrus.Logger, adminToken string) {
+func Register(app *fiber.App, repos repository.Repos, logger *logrus.Logger, adminToken string) {
 	app.Use(cors.New())
 	app.Use(lg.New())
 
-	NewCollegeHandler(app, collegeRepo, campusRepo, logger)
-	NewCampusHandler(app, campusRepo, studentGroupRepo, collegeRepo, logger)
-	NewGroupHandler(app, studentGroupRepo, campusRepo, collegeRepo, logger)
-	NewScheduleHandler(app, studentGroupRepo, lessonRepo, callRepo, collegeRepo, logger)
-	NewParserHandler(app, callRepo, studentGroupRepo, lessonRepo, campusRepo, collegeRepo, logger)
-	NewAdminHandler(app, collegeRepo, campusRepo, createTx, adminToken, logger)
+	NewCollegeHandler(app, repos.CollegeRepo, repos.CampusRepo, logger)
+	NewCampusHandler(app, repos.CampusRepo, repos.StudentGroupRepo, repos.CollegeRepo, logger)
+	NewGroupHandler(app, repos.StudentGroupRepo, repos.CampusRepo, repos.CollegeRepo, logger)
+	NewScheduleHandler(app, repos.StudentGroupRepo, repos.LessonRepo, repos.CallRepo, repos.CollegeRepo, logger)
+	NewParserHandler(app, repos.CallRepo, repos.StudentGroupRepo, repos.LessonRepo, repos.CampusRepo, repos.CollegeRepo, logger)
+	NewAdminHandler(app, repos.CollegeRepo, repos.CampusRepo, repos.CreateTx, adminToken, logger)
 }

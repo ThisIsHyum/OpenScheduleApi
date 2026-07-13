@@ -57,3 +57,12 @@ type Tx interface {
 }
 
 type CreateTx func() (Tx, error)
+
+type Repos struct {
+	CollegeRepo      CollegeRepo
+	CallRepo         CallRepo
+	StudentGroupRepo StudentGroupRepo
+	LessonRepo       LessonRepo
+	CampusRepo       CampusRepo
+	CreateTx         CreateTx
+}

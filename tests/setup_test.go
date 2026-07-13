@@ -14,16 +14,9 @@ const TestAdminToken = "K3r98j28f4j3"
 
 func SetupApp(db *gorm.DB, t *testing.T) *fiber.App {
 	t.Helper()
-	collegeRepo := database.NewCollegeDb(db)
-	campusRepo := database.NewCampusDb(db)
-	studentGroupRepo := database.NewGroupDb(db)
-	callRepo := database.NewCallDb(db)
-	lessonRepo := database.NewLessonDb(db)
-	createTx := database.InitCreateTx(db)
+	repos := database.NewRepos(db)
 
 	app := fiber.New()
-	server.Register(app,
-		collegeRepo, campusRepo,
-		studentGroupRepo, callRepo, lessonRepo, createTx, logrus.New(), TestAdminToken)
+	server.Register(app, repos, logrus.New(), TestAdminToken)
 	return app
 }
