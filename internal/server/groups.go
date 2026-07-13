@@ -24,9 +24,8 @@ type GroupHandler struct {
 }
 
 func NewGroupHandler(app *fiber.App,
-	studentGroupRepo repository.StudentGroupRepo,
-	campusRepo repository.CampusRepo, collegeRepo repository.CollegeRepo, logger *logrus.Logger) {
-	groupService := service.NewStudentGroupService(studentGroupRepo, campusRepo, collegeRepo)
+	repos repository.Repos, logger *logrus.Logger) {
+	groupService := service.NewStudentGroupService(repos.StudentGroupRepo, repos.CampusRepo, repos.CollegeRepo)
 	handler := GroupHandler{logger: logger, groupService: groupService}
 	app.Get(getGroupsByCampusId, handler.GetGroupsByCampusID)
 	app.Get(getGroupsByCollegeId, handler.GetGroupsByCollegeID)

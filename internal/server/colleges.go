@@ -21,8 +21,8 @@ type CollegeHandler struct {
 	logger  *logrus.Logger
 }
 
-func NewCollegeHandler(app *fiber.App, collegeRepo repository.CollegeRepo, campusRepo repository.CampusRepo, logger *logrus.Logger) {
-	collegeService := service.NewCollegeService(collegeRepo, campusRepo)
+func NewCollegeHandler(app *fiber.App, repos repository.Repos, logger *logrus.Logger) {
+	collegeService := service.NewCollegeService(repos.CollegeRepo, repos.CampusRepo)
 	handler := CollegeHandler{service: collegeService, logger: logger}
 	app.Get(getColleges, handler.GetColleges)
 	app.Get(getCollege, handler.GetCollege)

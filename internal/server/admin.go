@@ -23,8 +23,8 @@ type AdminHandler struct {
 }
 
 func NewAdminHandler(app *fiber.App,
-	collegeRepo repository.CollegeRepo, campusRepo repository.CampusRepo, createTx repository.CreateTx, adminToken string, logger *logrus.Logger) {
-	adminService := service.NewAdminService(collegeRepo, campusRepo, createTx)
+	repos repository.Repos, adminToken string, logger *logrus.Logger) {
+	adminService := service.NewAdminService(repos.CollegeRepo, repos.CampusRepo, repos.CreateTx)
 	handler := AdminHandler{adminService: adminService, logger: logger}
 	mh := MiddlewareHandler{logger: logger, adminToken: adminToken}
 	app.Group(admin, mh.AdminAuthMiddleware).

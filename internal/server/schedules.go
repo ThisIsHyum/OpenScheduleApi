@@ -20,14 +20,12 @@ type ScheduleHandler struct {
 }
 
 func NewScheduleHandler(app *fiber.App,
-	groupRepo repository.StudentGroupRepo,
-	lessonRepo repository.LessonRepo,
-	callRepo repository.CallRepo,
-	collegeRepo repository.CollegeRepo,
+	repos repository.Repos,
 	logger *logrus.Logger) {
 	handler := ScheduleHandler{
-		scheduleService: service.NewScheduleService(groupRepo, lessonRepo, callRepo, collegeRepo),
-		logger:          logger}
+		scheduleService: service.NewScheduleService(
+			repos.StudentGroupRepo, repos.LessonRepo, repos.CallRepo, repos.CollegeRepo),
+		logger: logger}
 	app.Get(schedules, handler.GetSchedules)
 }
 

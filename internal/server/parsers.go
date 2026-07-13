@@ -25,11 +25,11 @@ type ParserHandler struct {
 }
 
 func NewParserHandler(app *fiber.App,
-	callRepo repository.CallRepo, groupRepo repository.StudentGroupRepo,
-	lessonRepo repository.LessonRepo, campusRepo repository.CampusRepo,
-	collegeRepo repository.CollegeRepo, logger *logrus.Logger) {
+	repos repository.Repos, logger *logrus.Logger) {
 	parserService := service.NewParserService(
-		callRepo, groupRepo, lessonRepo, campusRepo, collegeRepo)
+		repos.CallRepo, repos.StudentGroupRepo,
+		repos.LessonRepo, repos.CampusRepo, repos.CollegeRepo)
+
 	handler := ParserHandler{logger: logger, service: parserService}
 	mh := MiddlewareHandler{parserService: parserService, logger: logger}
 	app.Group(parser, mh.ParserAuthMiddleware).
