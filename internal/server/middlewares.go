@@ -22,7 +22,7 @@ type MiddlewareHandler struct {
 func (h MiddlewareHandler) AdminAuthMiddleware(ctx fiber.Ctx) error {
 	token, err := h.extractBearerToken(ctx)
 	if err != nil {
-		dto.NewErrorResponse(err.Error(), fiber.StatusUnauthorized).Send(ctx)
+		return dto.NewErrorResponse(err.Error(), fiber.StatusUnauthorized).Send(ctx)
 	}
 
 	if h.adminToken != token {
@@ -37,7 +37,7 @@ func (h MiddlewareHandler) ParserAuthMiddleware(ctx fiber.Ctx) error {
 
 	token, err := h.extractBearerToken(ctx)
 	if err != nil {
-		dto.NewErrorResponse(err.Error(), fiber.StatusUnauthorized).Send(ctx)
+		return dto.NewErrorResponse(err.Error(), fiber.StatusUnauthorized).Send(ctx)
 	}
 	parser, err := h.parserService.GetByToken(c, token)
 
