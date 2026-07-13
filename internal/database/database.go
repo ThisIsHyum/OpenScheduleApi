@@ -10,10 +10,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type Db struct {
-	db *gorm.DB
-}
-
 type Tx struct {
 	db *gorm.DB
 }
