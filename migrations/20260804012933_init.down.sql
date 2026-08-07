@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS calls;
+DROP TABLE IF EXISTS lessons;
+DROP TABLE IF EXISTS student_groups;
+DROP TABLE IF EXISTS campuses;
+DROP TABLE IF EXISTS colleges;
+
