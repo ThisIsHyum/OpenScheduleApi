@@ -29,12 +29,12 @@ CREATE TABLE IF NOT EXISTS lessons (
     cabinet VARCHAR(20) NOT NULL,
     teacher VARCHAR(255) NOT NULL,
 
-    lesson_date DATE NOT NULL,
+    date DATE NOT NULL,
     lesson_order TINYINT UNSIGNED NOT NULL,
 
     student_group_id INT UNSIGNED NOT NULL,
 
-    UNIQUE(student_group_id, lesson_date, lesson_order),
+    UNIQUE(student_group_id, date, lesson_order),
     FOREIGN KEY (student_group_id) REFERENCES student_groups(id)
 );
 
