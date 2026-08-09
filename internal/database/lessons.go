@@ -5,13 +5,21 @@ import (
 	"slices"
 	"time"
 
-	"github.com/ThisIsHyum/OpenScheduleApi/internal/database/models"
 	"github.com/ThisIsHyum/OpenScheduleApi/internal/domain"
 
-	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
+
+type Lesson struct {
+	ID             uint
+	Title          string
+	Cabinet        string
+	Teacher        string
+	Date           time.Time
+	Order          uint `gorm:"column:lesson_order"`
+	StudentGroupID uint
+}
 
 type LessonDb struct {
 	db *gorm.DB
@@ -25,46 +33,41 @@ func (l LessonDb) Add(ctx context.Context, lessons []domain.Lesson) error {
 	lessons = slices.DeleteFunc(lessons, func(lesson domain.Lesson) bool {
 		return lesson.StudentGroupID == 0 || lesson.Title == ""
 	})
-	modelsLessons := []models.Lesson{}
+
+	lessonModels := make([]Lesson, 0, len(lessons))
 	for _, lesson := range lessons {
-		modelsLessons = append(modelsLessons, models.Lesson{
-			Title:          lesson.Title,
-			Cabinet:        lesson.Cabinet,
-			Date:           datatypes.Date(lesson.Date),
-			Teacher:        lesson.Teacher,
-			Order:          lesson.Order,
-			StudentGroupID: lesson.StudentGroupID,
-		})
+		lessonModels = append(lessonModels, Lesson(lesson))
 	}
 	return l.db.WithContext(ctx).
-		Clauses(clause.Insert{Modifier: "IGNORE"}).Create(&modelsLessons).Error
+		Clauses(clause.Insert{Modifier: "IGNORE"}).Create(&lessonModels).Error
 }
 
 func (l LessonDb) GetForDate(ctx context.Context, groupID uint, date time.Time) ([]domain.Lesson, error) {
-	var lessons []models.Lesson
+	var lessonModels []Lesson
 	if err := l.db.WithContext(ctx).
 		Where("date = ? AND student_group_id = ?",
-			date.Format("2006-01-02"), groupID).Find(&lessons).Error; err != nil {
+			date.Format("2006-01-02"), groupID).Find(&lessonModels).Error; err != nil {
 		return nil, err
 	}
-	var domainLessons []domain.Lesson
-	for _, lesson := range lessons {
-		domainLessons = append(domainLessons, lesson.ToDomain())
+	lessons := make([]domain.Lesson, 0, len(lessonModels))
+	for _, lesson := range lessonModels {
+		lessons = append(lessons, domain.Lesson(lesson))
 	}
-	return domainLessons, nil
+	return lessons, nil
 }
 
 func (l LessonDb) GetForDates(ctx context.Context, groupID uint,
 	start, end time.Time) ([]domain.Lesson, error) {
-	var lessons []models.Lesson
+	var lessonModels []Lesson
 	if err := l.db.WithContext(ctx).
-		Where("date BETWEEN ? AND ? AND student_group_id = ?", start, end, groupID).
-		Find(&lessons).Error; err != nil {
+		Where("date BETWEEN ? AND ? AND student_group_id = ?",
+			start.Format("2006-01-02"), end.Format("2006-01-02"), groupID).
+		Find(&lessonModels).Error; err != nil {
 		return nil, err
 	}
-	var domainLessons []domain.Lesson
-	for _, lesson := range lessons {
-		domainLessons = append(domainLessons, lesson.ToDomain())
+	lessons := make([]domain.Lesson, 0, len(lessonModels))
+	for _, lesson := range lessonModels {
+		lessons = append(lessons, domain.Lesson(lesson))
 	}
-	return domainLessons, nil
+	return lessons, nil
 }

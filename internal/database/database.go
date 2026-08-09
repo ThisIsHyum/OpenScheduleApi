@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/ThisIsHyum/OpenScheduleApi/internal/config"
-	"github.com/ThisIsHyum/OpenScheduleApi/internal/database/models"
 	"github.com/ThisIsHyum/OpenScheduleApi/internal/repository"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -22,13 +21,6 @@ func NewDb(cfgDb *config.DatabaseConfig) (*gorm.DB, error) {
 	db, err := gorm.Open(mysql.Open(dsn))
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
-	}
-
-	if err := db.AutoMigrate(
-		&models.College{}, &models.Campus{},
-		&models.Lesson{}, &models.StudentGroup{}, &models.Call{},
-	); err != nil {
-		return nil, fmt.Errorf("auto migration failed: %w", err)
 	}
 	return db, nil
 }

@@ -18,6 +18,8 @@ type Campus struct {
 	CollegeID uint
 }
 
+func (Campus) TableName() string { return "campuses" }
+
 type StudentGroup struct {
 	ID       uint
 	Name     string
