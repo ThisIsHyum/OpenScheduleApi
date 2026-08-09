@@ -8,7 +8,8 @@ services:
     ports:
       - ${OSA_SERVER_PORT}:${OSA_SERVER_PORT}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     env_file:
       - .env
     environment:
@@ -25,8 +26,25 @@ services:
       - .env
     environment:
       - MYSQL_DATABASE=osadb
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     volumes:
       - db_data:/var/lib/mysql
+
+  migrate:
+    image: migrate/migrate
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./migrations:/migrations
+    command:
+      - -path=/migrations
+      - -database=mysql://${OSA_DB_USER}:${OSA_DB_PASSWORD}@tcp(db:3306)/osadb?parseTime=true
+      - up
 
 volumes:
   db_data:
