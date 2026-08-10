@@ -8,8 +8,8 @@ services:
     ports:
       - ${OSA_SERVER_PORT}:${OSA_SERVER_PORT}
     depends_on:
-      db:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     env_file:
       - .env
     environment:
