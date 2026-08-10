@@ -4,13 +4,20 @@
 
 **OpenScheduleApi** - REST API сервер для управления расписаниями колледжей
 
+## Возможности
+
+- управление колледжами, кампусами и группами;
+- получение расписаний;
+- обновление расписаний, групп и звонков через парсеры;
+- OpenAPI-документация.
+
 ## Установка и запуск
 ### Бинарный файл
-1. перейдите на [страницу релизов](https://github.com/ThisIsHyum/OpenScheduleApi/releases)
-2. выберите бинарный файл под вашу ОС и архитектуру
-3. установите [MySQL Server](https://www.mysql.com/)
-4. поместите бинарный файл рядом с `.env`
-5. запустите бинарный файл
+1. Перейдите на [страницу релизов](https://github.com/ThisIsHyum/OpenScheduleApi/releases)
+2. Выберите бинарный файл под вашу ОС и архитектуру
+3. Установите [MySQL Server](https://www.mysql.com/)
+4. Создайте файл .env на основе [.env.example](.env.example).
+5. Запустите бинарный файл
 ```sh
 # как программа
 ./OpenScheduleApi-linux-x86-64
@@ -37,8 +44,26 @@ docker run -p 3530:3530 --env-file .env ghcr.io/thisishyum/openscheduleapi:lates
 docker run -p 3530:3530 --env-file .env ghcr.io/thisishyum/openscheduleapi:edge
 ```
 
+### Docker compose
+1. Установите docker
+2. Скопируйте файл [compose.yaml](compose.yaml)
+3. Создайте файл .env на основе [.env.example](.env.example).
+4. Запустите контейнеры
+```sh
+docker compose up
+```
+
+### Миграции
+Перед первым запуском API необходимо применить миграции базы данных.
+
+Для Docker Compose миграции запускаются автоматически при выполнении:
+```sh
+docker compose up
+```
+При ручной установке бинарного файла миграции необходимо применить отдельно.
+
 ## Конфигурация
-Конфигурация приложения задается через переменные окружения. Пример находится в файле [.env.example](https://github.com/ThisIsHyum/OpenScheduleApi/blob/main/.env.example)
+Конфигурация приложения задается через переменные окружения. Пример находится в файле [.env.example](.env.example)
 1. **OSA_SERVER_HOST**  
 IP-адрес или домен сервера  
 По умолчанию: _localhost_
@@ -75,14 +100,13 @@ _Обязательно_
 4. Клиенты получают данные через публичные эндпоинты
 
 ## Документация API
-- Все эндпоинты:  
-  https://github.com/ThisIsHyum/OpenScheduleApi/blob/main/api/openapi.yml
-- Модели:  
-  https://github.com/ThisIsHyum/OpenScheduleApi/blob/main/api/models.yml
-- Параметры:  
-  https://github.com/ThisIsHyum/OpenScheduleApi/blob/main/api/parameters.yml
-- Ошибки:  
-  https://github.com/ThisIsHyum/OpenScheduleApi/blob/main/api/errors.yml
+
+OpenAPI-спецификация доступна в репозитории:
+- [`docs/swagger.yaml`](docs/swagger.yaml)
+- [`docs/swagger.json`](docs/swagger.json)
+
+При запущенном сервере интерактивная документация доступна по адресу `/swagger`.
+
 ## Примеры запросов
 1. Создание колледжа  
 ```sh
