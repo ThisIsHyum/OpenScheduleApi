@@ -1,0 +1,634 @@
+definitions:
+  dto.Call:
+    type: object
+  dto.CampusResponse:
+    properties:
+      campusId:
+        type: integer
+      groups:
+        items:
+          $ref: '#/definitions/dto.StudentGroupResponse'
+        type: array
+      name:
+        type: string
+    type: object
+  dto.CollegeResponse:
+    properties:
+      campuses:
+        items:
+          $ref: '#/definitions/dto.CampusResponse'
+        type: array
+      collegeId:
+        type: integer
+      name:
+        type: string
+    type: object
+  dto.ErrorResponse:
+    properties:
+      error:
+        type: string
+      statusCode:
+        type: integer
+    type: object
+  dto.GetParserResponse:
+    properties:
+      collegeId:
+        type: integer
+    type: object
+  dto.Lesson:
+    properties:
+      cabinet:
+        type: string
+      date:
+        type: string
+      lessonId:
+        type: integer
+      order:
+        type: integer
+      studentGroupID:
+        type: integer
+      teacher:
+        type: string
+      title:
+        type: string
+    type: object
+  dto.NewParserRequest:
+    properties:
+      campusNames:
+        items:
+          type: string
+        type: array
+      collegeName:
+        type: string
+    type: object
+  dto.NewParserResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  dto.ScheduleLessonResponse:
+    properties:
+      cabinet:
+        type: string
+      endTime:
+        type: string
+      order:
+        type: integer
+      startTime:
+        type: string
+      teacher:
+        type: string
+      title:
+        type: string
+    type: object
+  dto.ScheduleResponse:
+    properties:
+      date:
+        type: string
+      groupId:
+        type: integer
+      lessons:
+        items:
+          $ref: '#/definitions/dto.ScheduleLessonResponse'
+        type: array
+    type: object
+  dto.StudentGroupResponse:
+    properties:
+      campusId:
+        type: integer
+      name:
+        type: string
+      studentGroupId:
+        type: integer
+    type: object
+  dto.UpdateGroupsRequest:
+    properties:
+      campusId:
+        type: integer
+      studentGroupNames:
+        items:
+          type: string
+        type: array
+    type: object
+info:
+  contact: {}
+  description: API for managing college schedules
+  license:
+    name: GPL-3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.html
+  title: Open Schedule API
+  version: "0.1"
+paths:
+  /admin/parser:
+    post:
+      consumes:
+      - application/json
+      description: create a new parser
+      parameters:
+      - description: new parser request
+        in: body
+        name: newParserRequest
+        required: true
+        schema:
+          $ref: '#/definitions/dto.NewParserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.NewParserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - AdminBearerAuth: []
+      summary: create a new parser
+      tags:
+      - admin
+  /admin/parser/{id}:
+    delete:
+      description: delete a parser by ID
+      parameters:
+      - description: Parser ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - AdminBearerAuth: []
+      summary: delete a parser
+      tags:
+      - admin
+  /campuses/{campusId}/groups:
+    get:
+      description: get all groups by campus ID or a group by campus ID with specified
+        name
+      parameters:
+      - description: Campus ID
+        in: path
+        name: campusId
+        required: true
+        type: integer
+      - description: Group name
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.StudentGroupResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: get groups by campus ID
+      tags:
+      - groups
+  /campuses/{id}:
+    get:
+      description: get a single campus by its ID
+      parameters:
+      - description: Campus ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CampusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: get a campus by ID
+      tags:
+      - campuses
+  /colleges:
+    get:
+      description: get all colleges or a college with specified name
+      parameters:
+      - description: College name
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.CollegeResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: get colleges
+      tags:
+      - colleges
+  /colleges/{collegeId}/campuses:
+    get:
+      description: get all campuses by college ID or a campus by college ID with specified
+        name
+      parameters:
+      - description: College ID
+        in: path
+        name: collegeId
+        required: true
+        type: integer
+      - description: Campus name
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.CampusResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: get campuses by college ID
+      tags:
+      - campuses
+  /colleges/{collegeId}/groups:
+    get:
+      description: get all groups by college ID or a group by college ID with specified
+        name
+      parameters:
+      - description: College ID
+        in: path
+        name: collegeId
+        required: true
+        type: integer
+      - description: Group name
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.StudentGroupResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: get groups by college ID
+      tags:
+      - groups
+  /colleges/{id}:
+    get:
+      description: get a single college by its ID
+      parameters:
+      - description: College ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CollegeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: get a college by ID
+      tags:
+      - colleges
+  /groups/{groupId}/schedules:
+    get:
+      description: get schedules by group ID
+      parameters:
+      - description: Group ID
+        in: path
+        name: groupId
+        required: true
+        type: integer
+      - description: Specific date (dd-mm-yyyy)
+        in: query
+        name: date
+        type: string
+      - description: Week of schedules
+        enum:
+        - previous
+        - current
+        - next
+        in: query
+        name: week
+        type: string
+      - description: Weekday of schedules
+        enum:
+        - Sunday
+        - Monday
+        - Tuesday
+        - Wednesday
+        - Thursday
+        - Friday
+        - Saturday
+        in: query
+        name: weekday
+        type: string
+      - description: Relative day
+        enum:
+        - today
+        - tomorrow
+        in: query
+        name: day
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.ScheduleResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: get schedules
+      tags:
+      - schedules
+  /groups/{id}:
+    get:
+      description: get a single group by its ID
+      parameters:
+      - description: Group ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.StudentGroupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: get a group by ID
+      tags:
+      - groups
+  /parser:
+    get:
+      description: get information about the college associated with the parser token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetParserResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ParserBearerAuth: []
+      summary: get parser information
+      tags:
+      - parser
+  /parser/calls:
+    post:
+      consumes:
+      - application/json
+      description: update calls of parser college
+      parameters:
+      - description: Calls
+        in: body
+        name: calls
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/dto.Call'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ParserBearerAuth: []
+      summary: update calls of parser college
+      tags:
+      - parser
+  /parser/groups:
+    post:
+      consumes:
+      - application/json
+      description: update groups of parser college
+      parameters:
+      - description: Update groups request
+        in: body
+        name: updateGroupsRequest
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateGroupsRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ParserBearerAuth: []
+      summary: update groups of parser college
+      tags:
+      - parser
+  /parser/lessons:
+    post:
+      consumes:
+      - application/json
+      description: add lessons to parser college
+      parameters:
+      - description: Lessons
+        in: body
+        name: lessons
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/dto.Lesson'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - ParserBearerAuth: []
+      summary: add lessons to parser college
+      tags:
+      - parser
+securityDefinitions:
+  AdminBearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+  ParserBearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
