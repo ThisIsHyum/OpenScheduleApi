@@ -13,7 +13,7 @@ import (
 
 const (
 	getColleges = "/colleges"
-	getCollege  = "/colleges/:collegeId"
+	getCollege  = "/colleges/:id"
 )
 
 type CollegeHandler struct {
@@ -28,6 +28,14 @@ func NewCollegeHandler(app *fiber.App, repos repository.Repos, logger *logrus.Lo
 	app.Get(getCollege, handler.GetCollege)
 }
 
+// @Summary get colleges
+// @Description get all colleges or a college with specified name
+// @Tags colleges
+// @Produce json
+// @Param name query string false "College name"
+// @Success 200 {array}  dto.CollegeResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /colleges [get]
 func (h CollegeHandler) GetColleges(ctx fiber.Ctx) error {
 	c := ctx.Context()
 	name := ctx.Query("name")
@@ -39,11 +47,21 @@ func (h CollegeHandler) GetColleges(ctx fiber.Ctx) error {
 	return ctx.JSON(colleges)
 }
 
+// @Summary get a college by ID
+// @Description get a single college by its ID
+// @Tags colleges
+// @Produce json
+// @Param id path int true "College ID"
+// @Success 200 {object} dto.CollegeResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /colleges/{id} [get]
 func (h CollegeHandler) GetCollege(ctx fiber.Ctx) error {
 	c := ctx.Context()
-	id := fiber.Params[uint](ctx, "collegeId")
+	id := fiber.Params[uint](ctx, "id")
 	if id == 0 {
-		return dto.NewErrorResponse("invalid collegeId", fiber.StatusBadRequest).Send(ctx)
+		return dto.NewErrorResponse("invalid id", fiber.StatusBadRequest).Send(ctx)
 	}
 
 	college, err := h.service.GetCollege(c, id)

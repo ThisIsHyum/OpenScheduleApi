@@ -39,23 +39,32 @@ func NewParserHandler(app *fiber.App,
 		Post(updateGroups, handler.UpdateGroups)
 }
 
-func (h ParserHandler) UpdateGroups(ctx fiber.Ctx) error {
-	c := ctx.Context()
-	var requestBody dto.UpdateGroupsRequest
-	if err := ctx.Bind().Body(&requestBody); err != nil {
-		return dto.NewErrorResponse("invalid request body", fiber.StatusBadRequest).Send(ctx)
-	}
-
-	if requestBody.CampusID == 0 || len(requestBody.StudentGroupNames) == 0 {
-		return dto.NewErrorResponse("invalid request data", fiber.StatusBadRequest).Send(ctx)
-	}
-	if err := h.service.UpdateGroups(c, requestBody.CampusID, requestBody.StudentGroupNames); err != nil {
-		h.logger.WithError(err).Error("unable to update groups")
-		return dto.NewErrorResponse("internal server error", fiber.StatusInternalServerError).Send(ctx)
-	}
-	return ctx.SendStatus(fiber.StatusNoContent)
+// @Summary get parser information
+// @Description get information about the college associated with the parser token
+// @Tags parser
+// @Security ParserBearerAuth
+// @Produce json
+// @Success 200 {object} dto.GetParserResponse
+// @Failure 401 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /parser [get]
+func (h ParserHandler) GetParser(ctx fiber.Ctx) error {
+	collegeId := fiber.Locals[uint](ctx, "collegeId")
+	return ctx.JSON(dto.GetParserResponse{CollegeID: collegeId})
 }
 
+// @Summary update calls of parser college
+// @Description update calls of parser college
+// @Tags parser
+// @Security ParserBearerAuth
+// @Accept json
+// @Produce json
+// @Param calls body []dto.Call true "Calls"
+// @Success 204
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 401 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /parser/calls [post]
 func (h ParserHandler) UpdateCalls(ctx fiber.Ctx) error {
 	c := ctx.Context()
 	collegeId := fiber.Locals[uint](ctx, "collegeId")
@@ -85,6 +94,18 @@ func (h ParserHandler) UpdateCalls(ctx fiber.Ctx) error {
 	return ctx.SendStatus(fiber.StatusNoContent)
 }
 
+// @Summary add lessons to parser college
+// @Description add lessons to parser college
+// @Tags parser
+// @Security ParserBearerAuth
+// @Accept json
+// @Produce json
+// @Param lessons body []dto.Lesson true "Lessons"
+// @Success 204
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 401 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /parser/lessons [post]
 func (h ParserHandler) AddLessons(ctx fiber.Ctx) error {
 	c := ctx.Context()
 
@@ -117,7 +138,31 @@ func (h ParserHandler) AddLessons(ctx fiber.Ctx) error {
 	return ctx.SendStatus(fiber.StatusNoContent)
 }
 
-func (h ParserHandler) GetParser(ctx fiber.Ctx) error {
-	collegeId := fiber.Locals[uint](ctx, "collegeId")
-	return ctx.JSON(dto.GetParserResponse{CollegeID: collegeId})
+// @Summary update groups of parser college
+// @Description update groups of parser college
+// @Tags parser
+// @Security ParserBearerAuth
+// @Accept json
+// @Produce json
+// @Param updateGroupsRequest body dto.UpdateGroupsRequest true "Update groups request"
+// @Success 204
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 401 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /parser/groups [post]
+func (h ParserHandler) UpdateGroups(ctx fiber.Ctx) error {
+	c := ctx.Context()
+	var requestBody dto.UpdateGroupsRequest
+	if err := ctx.Bind().Body(&requestBody); err != nil {
+		return dto.NewErrorResponse("invalid request body", fiber.StatusBadRequest).Send(ctx)
+	}
+
+	if requestBody.CampusID == 0 || len(requestBody.StudentGroupNames) == 0 {
+		return dto.NewErrorResponse("invalid request data", fiber.StatusBadRequest).Send(ctx)
+	}
+	if err := h.service.UpdateGroups(c, requestBody.CampusID, requestBody.StudentGroupNames); err != nil {
+		h.logger.WithError(err).Error("unable to update groups")
+		return dto.NewErrorResponse("internal server error", fiber.StatusInternalServerError).Send(ctx)
+	}
+	return ctx.SendStatus(fiber.StatusNoContent)
 }

@@ -13,7 +13,7 @@ import (
 
 const (
 	getCampuses = "/colleges/:collegeId/campuses"
-	getCampus   = "/campuses/:campusId"
+	getCampus   = "/campuses/:id"
 )
 
 type CampusHandler struct {
@@ -29,10 +29,22 @@ func NewCampusHandler(app *fiber.App, repos repository.Repos, logger *logrus.Log
 	app.Get(getCampus, handler.GetCampus)
 }
 
+// @Summary get campuses by college ID
+// @Description get all campuses by college ID or a campus by college ID with specified name
+// @Tags campuses
+// @Produce json
+// @Param collegeId path  int    true  "College ID"
+// @Param name      query string false  "Campus name"
+// @Success 200 {array}  dto.CampusResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /colleges/{collegeId}/campuses [get]
 func (h CampusHandler) GetCampuses(ctx fiber.Ctx) error {
 	c := ctx.Context()
-	var name = ctx.Query("name")
-	var id = fiber.Params[uint](ctx, "collegeId")
+
+	name := ctx.Query("name")
+	id := fiber.Params[uint](ctx, "collegeId")
 	if id == 0 {
 		return dto.NewErrorResponse("invalid collegeId", fiber.StatusBadRequest).Send(ctx)
 	}
@@ -48,11 +60,21 @@ func (h CampusHandler) GetCampuses(ctx fiber.Ctx) error {
 	return ctx.JSON(campuses)
 }
 
+// @Summary get a campus by ID
+// @Description get a single campus by its ID
+// @Tags campuses
+// @Produce json
+// @Param id path int true "Campus ID"
+// @Success 200 {object}  dto.CampusResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /campuses/{id} [get]
 func (h CampusHandler) GetCampus(ctx fiber.Ctx) error {
 	c := ctx.Context()
-	id := fiber.Params[uint](ctx, "campusId")
+	id := fiber.Params[uint](ctx, "id")
 	if id == 0 {
-		return dto.NewErrorResponse("invalid campusId", fiber.StatusBadRequest).Send(ctx)
+		return dto.NewErrorResponse("invalid id", fiber.StatusBadRequest).Send(ctx)
 	}
 	campus, err := h.service.GetCampusByID(c, id)
 	if errors.Is(err, domain.ErrNotFound) {

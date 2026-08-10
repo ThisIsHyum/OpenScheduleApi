@@ -29,6 +29,21 @@ func NewScheduleHandler(app *fiber.App,
 	app.Get(schedules, handler.GetSchedules)
 }
 
+// @Summary get schedules
+// @Description get schedules by group ID
+// @Tags schedules
+// @Produce json
+// @Param groupId path  int    true  "Group ID"
+// @Param date query string false "Specific date (dd-mm-yyyy)"
+// @Param week query string false "Week of schedules" Enums(previous,current,next)
+// @Param weekday query string false "Weekday of schedules" Enums(Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday)
+// @Param day query string false "Relative day" Enums(today,tomorrow)
+// @Success 200 {array}  dto.ScheduleResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 409 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /groups/{groupId}/schedules [get]
 func (h ScheduleHandler) GetSchedules(ctx fiber.Ctx) error {
 	dateStr := ctx.Query("date")
 	week := ctx.Query("week")

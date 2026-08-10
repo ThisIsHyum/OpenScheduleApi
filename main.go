@@ -10,6 +10,18 @@ import (
 	"github.com/gofiber/fiber/v3"
 )
 
+// @title Open Schedule API
+// @version 0.1
+// @description API for managing college schedules
+// @license.name GPL-3.0
+// @license.url https://www.gnu.org/licenses/gpl-3.0.html
+// @securityDefinitions.apikey AdminBearerAuth
+// @in header
+// @name Authorization
+// @securityDefinitions.apikey ParserBearerAuth
+// @in header
+// @name Authorization
+
 func main() {
 	logger := logger.New()
 
