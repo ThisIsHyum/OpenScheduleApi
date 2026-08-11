@@ -11,7 +11,7 @@ import (
 )
 
 // @title Open Schedule API
-// @version 0.1
+// @version 0.3.1
 // @description API for managing college schedules
 // @license.name GPL-3.0
 // @license.url https://www.gnu.org/licenses/gpl-3.0.html

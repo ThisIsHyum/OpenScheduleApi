@@ -117,7 +117,7 @@ info:
     name: GPL-3.0
     url: https://www.gnu.org/licenses/gpl-3.0.html
   title: Open Schedule API
-  version: "0.1"
+  version: 0.3.1
 paths:
   /admin/parser:
     post:
