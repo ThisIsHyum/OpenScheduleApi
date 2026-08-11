@@ -72,6 +72,9 @@ func (h ScheduleHandler) GetSchedules(ctx fiber.Ctx) error {
 		} else if err != nil {
 			return dto.NewErrorResponse("internal server error", fiber.StatusInternalServerError).Send(ctx)
 		}
+		if resp.GroupID == 0 {
+			return ctx.JSON(nil)
+		}
 		return ctx.JSON([]dto.ScheduleResponse{resp})
 	}
 
@@ -84,6 +87,9 @@ func (h ScheduleHandler) GetSchedules(ctx fiber.Ctx) error {
 		if err != nil {
 			return dto.NewErrorResponse("internal server error", fiber.StatusInternalServerError).Send(ctx)
 		}
+		if resp.GroupID == 0 {
+			return ctx.JSON(nil)
+		}
 		return ctx.JSON([]dto.ScheduleResponse{resp})
 	}
 
@@ -93,6 +99,9 @@ func (h ScheduleHandler) GetSchedules(ctx fiber.Ctx) error {
 			return dto.NewErrorResponse(err.Error(), fiber.StatusBadRequest).Send(ctx)
 		} else if err != nil {
 			return dto.NewErrorResponse("internal server error", fiber.StatusInternalServerError).Send(ctx)
+		}
+		if resp.GroupID == 0 {
+			return ctx.JSON(nil)
 		}
 		return ctx.JSON([]dto.ScheduleResponse{resp})
 	}
