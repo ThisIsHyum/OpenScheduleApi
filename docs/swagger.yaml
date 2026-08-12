@@ -1,5 +1,16 @@
 definitions:
   dto.Call:
+    properties:
+      begins:
+        type: string
+      callId:
+        type: integer
+      ends:
+        type: string
+      order:
+        type: integer
+      weekday:
+        $ref: '#/definitions/time.Weekday'
     type: object
   dto.CampusResponse:
     properties:
@@ -110,6 +121,24 @@ definitions:
           type: string
         type: array
     type: object
+  time.Weekday:
+    enum:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    type: integer
+    x-enum-varnames:
+    - Sunday
+    - Monday
+    - Tuesday
+    - Wednesday
+    - Thursday
+    - Friday
+    - Saturday
 info:
   contact: {}
   description: API for managing college schedules

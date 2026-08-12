@@ -789,7 +789,24 @@ const docTemplate = `{
     },
     "definitions": {
         "dto.Call": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "begins": {
+                    "type": "string"
+                },
+                "callId": {
+                    "type": "integer"
+                },
+                "ends": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "weekday": {
+                    "$ref": "#/definitions/time.Weekday"
+                }
+            }
         },
         "dto.CampusResponse": {
             "type": "object",
@@ -959,6 +976,27 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "time.Weekday": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+            ],
+            "x-enum-varnames": [
+                "Sunday",
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday"
+            ]
         }
     },
     "securityDefinitions": {
