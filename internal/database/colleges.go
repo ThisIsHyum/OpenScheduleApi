@@ -55,7 +55,7 @@ func (c CollegeDb) GetAll(ctx context.Context) ([]domain.College, error) {
 func (c CollegeDb) GetByGroupID(ctx context.Context, groupID uint) (domain.College, error) {
 	var college domain.College
 	err := c.db.WithContext(ctx).Table("student_groups AS sg").
-		Select("c.id, c.name").
+		Select("co.id, co.name").
 		Joins("JOIN campuses AS c ON c.id = sg.campus_id").
 		Joins("JOIN colleges AS co ON co.id = c.college_id").
 		Where("sg.id = ?", groupID).
