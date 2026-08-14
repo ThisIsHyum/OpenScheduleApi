@@ -842,6 +842,14 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.Date": {
+            "type": "object",
+            "properties": {
+                "time.Time": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -868,7 +876,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "date": {
-                    "type": "string"
+                    "$ref": "#/definitions/dto.Date"
                 },
                 "lessonId": {
                     "type": "integer"

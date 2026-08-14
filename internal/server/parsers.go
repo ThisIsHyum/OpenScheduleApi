@@ -124,7 +124,7 @@ func (h ParserHandler) AddLessons(ctx fiber.Ctx) error {
 			ID:             lesson.LessonID,
 			Title:          lesson.Title,
 			Cabinet:        lesson.Cabinet,
-			Date:           lesson.Date,
+			Date:           lesson.Date.Time,
 			Teacher:        lesson.Teacher,
 			Order:          lesson.Order,
 			StudentGroupID: lesson.StudentGroupID,

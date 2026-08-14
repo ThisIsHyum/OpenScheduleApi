@@ -34,6 +34,11 @@ definitions:
       name:
         type: string
     type: object
+  dto.Date:
+    properties:
+      time.Time:
+        type: string
+    type: object
   dto.ErrorResponse:
     properties:
       error:
@@ -51,7 +56,7 @@ definitions:
       cabinet:
         type: string
       date:
-        type: string
+        $ref: '#/definitions/dto.Date'
       lessonId:
         type: integer
       order:
